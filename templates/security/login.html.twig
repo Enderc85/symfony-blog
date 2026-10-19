@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login | Neon Store{% endblock %}
+{% block body_class %}landing-page{% endblock %}
+
+{% block body %}
+<section class="auth-neon">
+    <div class="container">
+        <div class="auth-neon__header text-center">
+            <p class="auth-neon__kicker">WELCOME BACK</p>
+            <h1>Sign in</h1>
+            <p>Access your account to manage orders, wishlist and profile preferences.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="auth-neon__card">
+                    <form method="post" class="auth-neon__form">
+                        {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                        {% endif %}
+
+                        {% if app.user %}
+                        <div class="mb-3">
+                            You are logged in as {{ app.user.email }}, <a href="{{ path('app_logout') }}">Logout</a>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="inputEmail">Email</label>
+                            <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                                class="form-control auth-neon__input" autocomplete="email" required autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" name="password" id="inputPassword"
+                                class="form-control auth-neon__input" autocomplete="current-password" required>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="text-right">
+                            <button class="btn btn-lg landing-cta" type="submit">Sign in</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

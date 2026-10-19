@@ -5,6 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Contact;
+use App\Form\ContactFormType;
+use Symfony\Component\HttpFoundation\Request;
 
 class PageController extends AbstractController
 {
@@ -21,21 +25,27 @@ class PageController extends AbstractController
     }
 
     #[Route('/contact', name: 'contact')]
-    public function contact(): Response
-    {
-        return $this->render('contact.html.twig');
+public function contact(ManagerRegistry $doctrine, Request $request): Response
+{
+    $contact = new Contact();
+    $form = $this->createForm(ContactFormType::class, $contact);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $contacto = $form->getData();    
+        $entityManager = $doctrine->getManager();    
+        $entityManager->persist($contacto);
+        $entityManager->flush();
+        return $this->redirectToRoute('thankyou', []);
     }
+    return $this->render('contact.html.twig', array(
+        'form' => $form->createView()    
+    ));
+}
 
-    #[Route('/blog', name: 'blog')]
-    public function blog(): Response
+    #[Route('/thankyou', name: 'thankyou')]
+    public function thankyou(): Response
     {
-        return $this->render('blog.html.twig');
-    }
-
-    #[Route('/single_post', name: 'single_post')]
-    public function single_post(): Response
-    {
-        return $this->render('single_post.html.twig');
+        return $this->render('thankyou.html.twig');
     }
 }
 
