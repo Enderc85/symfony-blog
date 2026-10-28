@@ -11,7 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextAreaType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 class PostFormType extends AbstractType
@@ -19,8 +21,22 @@ class PostFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
 {
     $builder
-        ->add('title')
-        ->add('content')
+        ->add('title', TextType::class, [
+            'required' => true,
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Please enter a title',
+                ])
+            ]
+        ])
+        ->add('content', TextareaType::class, [
+            'required' => true,
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Please enter a content',
+                ])
+            ]
+        ])
         ->add('image',
              FileType::class,
             [
