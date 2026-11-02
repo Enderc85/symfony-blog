@@ -1,25 +1,65 @@
-{%extends"base.html.twig"%}
-{%block body%}
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block body %}
+<!-- Principal Content Start -->
 <div id="blog">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12 col-sm-8 row"> <!-- Blocks of Posts -->
+
+            <!-- Blocks of Posts (Izquierda) -->
+            <div class="col-xs-12 col-sm-8">
+
+                {% if searchTerm is defined and searchTerm %}
+                <h3>Resultados de la búsqueda para: "{{ searchTerm }}" ({{ total }} encontrados)</h3>
+                <hr>
+                {% endif %}
+
+                {% if total > 0 %}
                 {% for post in posts %}
-                {{ include ('partials/_post.html.twig', {'post': post}) }}
+                {{ include('partials/_post.html.twig', {'post': post}) }}
                 {% endfor %}
+
+                <!-- Paginador dinámico reutilizable -->
+                <div class="text-left">
+                    {% if searchTerm is defined and searchTerm %}
+                    {{ include('partials/_paginador.html.twig', {
+                    'page': page,
+                    'totalPages': totalPages,
+                    'ruta': 'blog_buscar',
+                    'parametros': {'searchTerm': searchTerm}
+                    }) }}
+                    {% else %}
+                    {{ include('partials/_paginador.html.twig', {
+                    'page': page,
+                    'totalPages': totalPages,
+                    'ruta': 'blog'
+                    }) }}
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center"
+                    style="padding: 30px; margin-top: 20px; background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; border-radius: 4px;">
+                    <i class="fa fa-exclamation-triangle fa-2x" style="margin-bottom: 10px;"></i>
+                    <h4 style="margin: 0 0 10px 0; font-weight: bold;">No se han encontrado posts</h4>
+                    <p style="margin: 0;">Prueba a buscar con otras palabras o términos diferentes.</p>
+                </div>
+                {% endif %}
+
             </div>
             <!-- End of Blog Post -->
 
-            <!-- Side bar -->
+            <!-- Side bar (Derecha) -->
             <div class="col-xs-12 col-sm-4">
-                <form class="form-horizontal">
-                    <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Research">
-                        <span class="input-group-btn">
-                            <a href="" class="btn"><i class="fa fa-search"></i></a>
-                        </span>
-                    </div>
+
+                <!-- Formulario de búsqueda según la guía 5.11 -->
+                <form class="" action="{{ path('blog_buscar') }}">
+                    <input type="text" class="form-control" style="display:unset; width:85%" placeholder="Research"
+                        name="searchTerm" value="{{ searchTerm is defined ? searchTerm : '' }}">
+                    <button type="submit" class="btn btn-primary btn-danger"><i class="fa fa-search"></i></button>
                 </form>
+
                 <div class="panel">
                     <div class="panel-heading">
                         <h4>Categories</h4>
@@ -38,17 +78,20 @@
                     <h4>Soluta</h4>
                     <p>Quod soluta corrupti earum officia vel inventore vitae quidem, consequuntur odit impedit.</p>
                 </div>
+
                 <h3>Recent Posts</h3>
                 <hr>
-                <div class="recentPostContainer">
-                    {% for recent in recents %}
-                    {{ include ('partials/_recent_blog.html.twig', {'recent': recent}) }}
-                    {% endfor %}
-                </div>
+
+                <!-- Bucle dinámico que inyecta los posts recientes con su partial original -->
+                {% for recent in recents %}
+                {{ include('partials/_recent_post.html.twig', {'recent': recent}) }}
+                {% endfor %}
+
             </div>
             <!-- End of Side bar -->
 
         </div>
     </div>
 </div>
-{%endblock%}
+<!-- End of Principal Content Start -->
+{% endblock %}
