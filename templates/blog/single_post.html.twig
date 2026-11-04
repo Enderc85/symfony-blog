@@ -25,7 +25,7 @@
                             {{post.numComments}} |</li>
 
                         <li><a href="{{ path('post_like', {slug: post.slug}) }}">LIKE</a> <i
-                                class="fa fa-heart sr-icons"></i> {{post.numLikes}}</li>
+                                class="fa fa-heart sr-icons"></i> <span id="likes">{{post.numLikes}}</span></li>
 
                     </ul>
                 </div>

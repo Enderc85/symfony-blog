@@ -105,9 +105,12 @@ $post->like();
 $entityManager = $doctrine->getManager();
 $entityManager->persist($post);
 $entityManager->flush();
-}
+
 $data = ['success' => true, 'likes' => $post->getNumLikes()];
 return $this->json($data);
+}
+return $this->json(['success' => false, 'error' => "Post no encontrado"], Response::HTTP_NOT_FOUND);
 
 }
+
 }
